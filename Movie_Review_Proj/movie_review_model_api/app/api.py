@@ -12,23 +12,23 @@ from movie_review_model import __version__ as model_version
 from movie_review_model.predict import predict
 
 
-from app import __version__, schemas
-from app.config import settings
+from app import __version__
+# from app.config import settings
 
-app = FastAPI()
+
 api_router = APIRouter()
 
-@app.get("/")
+@api_router.get("/")
 def read_root():
     return {"Hello": "World"}
 
 
-@app.post("/predict")
+@api_router.post("/predict")
 def predict_sentiment(review_text: str = Body(...)):
     sentiment = predict(review_text)
     return sentiment
 
-@app.get("/predict/{review_text}")
-async def predict(review_text: str):
-    sentiment = predict(review_text)
-    return sentiment
+# @api_router.get("/predict/{review_text}")
+# async def predict(review_text: str):
+#     sentiment = predict(review_text)
+#     return sentiment

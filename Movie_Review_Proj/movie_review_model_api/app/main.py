@@ -3,7 +3,6 @@ from pathlib import Path
 file = Path(__file__).resolve()
 parent, root = file.parent, file.parents[1]
 sys.path.append(str(root))
-#print(sys.path)
 from typing import Any
 
 from fastapi import APIRouter, FastAPI, Request
@@ -56,3 +55,6 @@ if __name__ == "__main__":
     # Use this for debugging purposes only
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
+    
+    ## local host--> 127.0.0.0  
+    ## host --> 0.0.0.0 allows all host
