@@ -1,0 +1,18 @@
+include movie_review_model/VERSION
+
+include *.txt
+include *.md
+include *.pkl
+recursive-include ./movie_review_model *
+
+include movie_review_model/datasets/*
+include movie_review_model/trained_models/*.pkl
+include movie_review_model/VERSION
+include movie_review_model/config.yml
+
+include ./requirements/requirements.txt
+exclude *.log
+exclude *.cfg
+
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]

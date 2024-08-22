@@ -1,4 +1,5 @@
-from transformers import BertForSequenceClassification, AdamW
+import torch
+from transformers import BertForSequenceClassification
 
 def build_model():
     model = BertForSequenceClassification.from_pretrained(
@@ -8,4 +9,5 @@ def build_model():
     return model
 
 def get_optimizer(model, learning_rate=2e-5):
-    return AdamW(model.parameters(), lr=learning_rate)
+    # Use PyTorch's AdamW optimizer instead of the deprecated transformers' AdamW
+    return torch.optim.AdamW(model.parameters(), lr=learning_rate)

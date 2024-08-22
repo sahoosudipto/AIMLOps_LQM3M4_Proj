@@ -25,7 +25,7 @@ def predict(text):
     model = BertForSequenceClassification.from_pretrained(
         "./movie_review_model/trained_models/model"
     )
-    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', clean_up_tokenization_spaces=False)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
@@ -38,8 +38,10 @@ def predict(text):
         outputs = model(input_ids)
         predicted_label = torch.argmax(outputs.logits, dim=1).item()
 
-    sentiment = "Positive" if predicted_label == 1 else "Negative"
-    return sentiment
+    return {
+        "label": predicted_label,
+        "sentiment": "Positive" if predicted_label == 1 else "Negative"
+    }
 
 if __name__ == "__main__":
     # Example input data

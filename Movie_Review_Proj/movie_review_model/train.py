@@ -6,7 +6,7 @@ parent, root = file.parent, file.parents[1]
 sys.path.append(str(root))
 
 from movie_review_model.config.core import config
-from movie_review_model.processing.data_manager import load_custom_dataset
+from movie_review_model.processing.data_manager import load_custom_dataset, load_imdb_dataset
 from movie_review_model.pipeline import build_pipeline
 
 
@@ -15,7 +15,11 @@ from movie_review_model.pipeline import build_pipeline
 def train_pipeline():
     """training pipeline"""
     # Load dataset
-    texts, labels = load_custom_dataset(config.data.train_data_path, split_percentage=5)
+    # texts, labels = load_custom_dataset(config.data.train_data_path, split_percentage=25)
+
+    # Load a small sample from the IMDB dataset
+    texts, labels = load_imdb_dataset(sample_size=1000)
+    
     # Ensure texts are in the correct format
     if not isinstance(texts, list) or not all(isinstance(text, str) for text in texts):
         raise ValueError("Texts must be a list of strings.")

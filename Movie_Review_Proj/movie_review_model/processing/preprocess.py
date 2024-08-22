@@ -1,17 +1,25 @@
 """Pre-processing"""
+from pathlib import Path
+import sys
+
+file = Path(__file__).resolve()
+parent, root = file.parent, file.parents[1]
+sys.path.append(str(root))
+
+from movie_review_model.config.core import config
+
 from sklearn.base import BaseEstimator, TransformerMixin
 from transformers import BertTokenizer
 import torch
 import torch.nn as nn
 from torch.utils.data import  Dataset, DataLoader
-from movie_review_model.config.core import config
 
 ###  Pre-Pipeline Preparation ###
 
 class TokenizerTransformer(BaseEstimator, TransformerMixin):
 
     def __init__(self,  max_length = config.model.max_length):
-        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', clean_up_tokenization_spaces=False)
         self.max_length = max_length
 
     def fit(self, X, y=None):
