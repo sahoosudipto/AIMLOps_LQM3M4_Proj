@@ -1,0 +1,14 @@
+numpy < 2.0.0
+pandas
+pydantic
+scikit-learn 
+strictyaml
+ruamel.yaml 
+joblib
+transformers
+datasets
+fastapi
+uvicorn
+nest_asyncio
+pytest
+torch

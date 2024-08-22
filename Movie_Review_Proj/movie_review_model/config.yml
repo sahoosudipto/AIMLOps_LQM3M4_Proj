@@ -1,0 +1,25 @@
+app_config:
+  package_name: movie_review_model
+  pipeline_name: movie_review_model
+  pipeline_save_file: movie_review_model_output_v
+
+model:
+  type: "bert-base-uncased"
+  max_length: 256
+  batch_size: 16
+  learning_rate: 2e-5
+  epochs: 2
+  train_batch_size: 16
+  eval_batch_size: 16
+  optimizer: Adam with betas=(0.9,0.999)
+  epsilon: 1e-08
+  weight_decay: 0.1
+  seed: 13
+  tokenizer: BertTokenizer.from_pretrained('bert-base-uncased')
+
+data:
+  train_data_path: "./movie_review_model/datasets/train.csv"
+  test_data_path: "./movie_review_model/datasets/test.csv"
+
+output:
+  output_model_path: "./movie_review_model/trained_models/model"
