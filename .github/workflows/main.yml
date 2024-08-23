@@ -19,15 +19,17 @@ jobs:
     # - name: Install dependencies
     #   run: pip install -r ./Movie_Review_Proj/requirements/requirements.txt
     - name: Check directory before training
-      run: ls -R .
-    -name: check project root
-      run: ls -R ./Movie_Review_Proj/movie_review_model/
+      run: ls -R ./
+    - name: Check directory before training
+      run: pwd
     - name: List files after training
       run: ls -R ./Movie_Review_Proj/movie_review_model/trained_models/
     # - name: Train and save pipeline
     #   run: python ./Movie_Review_Proj/movie_review_model/train.py
     # - name: List files after training
     #   run: ls -R ./Movie_Review_Proj/movie_review_model/trained_models/model
+    - name: Debug paths
+      run: find ./Movie_Review_Proj/ -name "*.pkl"
     # - uses: actions/upload-artifact@v2
     #   with:
     #     name: my-trained-pipeline
