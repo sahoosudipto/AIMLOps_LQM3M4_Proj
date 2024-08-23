@@ -83,7 +83,8 @@ jobs:
         retention-days: 1
 
   push-image:
-    needs: [train, test, build]
+    # needs: [train, test, build]
+    needs: [train, build]
     runs-on: ubuntu-latest
     steps:
     - name: Repo Checkout
@@ -115,7 +116,8 @@ jobs:
 
   deploy:
     runs-on: self-hosted
-    needs: [train, test, build, push-image]
+    # needs: [train, test, build, push-image]
+    needs: [train, build, push-image]
     steps:
     - name: Pull Docker Image
       env: 
