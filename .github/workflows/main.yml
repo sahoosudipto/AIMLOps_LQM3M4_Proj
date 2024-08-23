@@ -2,8 +2,7 @@ name: Push a Docker Image
 on:
   push:
     branches:
-      # - main
-      - test
+      - main
   workflow_dispatch:
 
 jobs:
