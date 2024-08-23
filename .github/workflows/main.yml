@@ -52,9 +52,11 @@ jobs:
     - name: List files after downloading artifact
       run: ls -R ./Movie_Review_Proj/movie_review_model/trained_models/
     - name: Install dependencies
-      run: pip install -r ./Movie_Review_Proj/requirements/requirements.txt
-    - name: Test with pytest
+      run: pip install -r ./Movie_Review_Proj/requirements/test_requirements.txt
+    - name: Test predictionl with pytest
       run: pytest ./Movie_Review_Proj/test/test_predictionl.py
+    - name: Run all testcases  with pytest
+      run: pytest
 
   build:
     # needs: [train, test]
