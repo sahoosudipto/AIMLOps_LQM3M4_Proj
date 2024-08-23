@@ -53,7 +53,7 @@ jobs:
     - name: Install dependencies
       run: pip install -r ./Movie_Review_Proj/requirements/requirements.txt
     - name: Test with pytest
-      run: pytest
+      run: pytest ./Movie_Review_Proj/test/test_predictionl.py
 
   build:
     needs: [train, test]
