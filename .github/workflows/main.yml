@@ -1,0 +1,120 @@
+name: Push a Docker Image
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10.4'
+    - name: Install dependencies
+      run: pip install -r ./Movie_Review_Proj/requirements/requirements.txt
+    - name: Train and save pipeline
+      run: python ./Movie_Review_Proj/movie_review_model/train.py
+    - uses: actions/upload-artifact@v2
+      with:
+        name: my-trained-pipeline
+        path: ./Movie_Review_Proj/movie_review_model/trained_models/*.pkl
+        retention-days: 1
+
+  test:
+    needs: train
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10.4'
+    - uses: actions/download-artifact@v2
+      with:
+        name: my-trained-pipeline
+        path: ./Movie_Review_Proj/movie_review_model/trained_models
+    # - name: Install dependencies
+    #   run: pip install -r ./Movie_Review_Proj/requirements/requirements.txt
+    - name: Test with pytest
+      run: pytest
+
+  build:
+    needs: [train, test]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10.4'
+    - uses: actions/download-artifact@v2
+      with:
+        name: my-trained-pipeline
+        path: ./Movie_Review_Proj/movie_review_model/trained_models
+    - name: Install dependencies
+      run: pip install --upgrade build
+    - name: Build package
+      run: cd bikeshare_project && python -m build
+    - uses: actions/upload-artifact@v2
+      with:
+        name: my-build-package
+        path: ./Movie_Review_Proj/dist/*.whl
+        retention-days: 1
+
+  push-image:
+    needs: [train, test, build]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Repo Checkout
+      uses: actions/checkout@v2
+
+    - uses: actions/download-artifact@v2
+      with:
+        name: my-build-package
+        path: ./Movie_Review_Proj/movie_review_model_api
+
+    - name: Login to Docker hub
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PWD }}
+      run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
+
+    - name: Build the Docker image for Fastapi app
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+      run: cd bikeshare_project && docker build . -f Dockerfile -t $DOCKER_USER/movie_review_model_api:latest
+
+    - name: Push the Docker Image
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+      run: docker push $DOCKER_USER/movie_review_model_api
+
+    - name: Logout to Docker hub
+      run: docker logout
+
+  deploy:
+    runs-on: self-hosted
+    needs: [train, test, build, push-image]
+    steps:
+    - name: Pull Docker Image
+      env: 
+        DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+      run: sudo docker pull $DOCKER_USER/movie_review_model_api:latest
+  
+    - name: Delete Old Docker Container
+      run: sudo docker rm -f movie-review-fastapi-container || true
+  
+    - name: Run Docker Container
+      env: 
+        DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+      run: sudo docker run -it -d -p 8001:8001 --name movie-review-fastapi-container $DOCKER_USER/movie_review_model_api:latest
