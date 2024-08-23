@@ -74,7 +74,7 @@ jobs:
     - name: Install dependencies
       run: pip install --upgrade build
     - name: Build package
-      run: cd bikeshare_project && python -m build
+      run: cd Movie_Review_Proj && python -m build
     - uses: actions/upload-artifact@v2
       with:
         name: my-build-package
