@@ -19,7 +19,7 @@ def train_pipeline():
     # texts, labels = load_custom_dataset(config.data.train_data_path, split_percentage=25)
 
     # Load a small sample from the IMDB dataset
-    texts, labels = load_imdb_dataset(sample_size=100) #for fast training
+    texts, labels = load_imdb_dataset(sample_size=50) #for fast training
     
     # Ensure texts are in the correct format
     if not isinstance(texts, list) or not all(isinstance(text, str) for text in texts):
@@ -37,11 +37,15 @@ def train_pipeline():
     #     # Save the pipeline as a .pkl file
     model_path = Path(config.output.output_model_path) / "trained_pipeline.pkl"
     pipeline.named_steps['classifier'].model.save_pretrained(model_path)
+    print(pipeline)
     # with open(model_path, "wb") as f:
     #     pickle.dump(pipeline, f)
         
     # save_pipeline(pipeline_to_persist=pipeline)
-    
+    if model_path.exists():
+        print(f"Model saved successfully at: {model_path}")
+    else:
+        print("Model save failed.")
     print("Model and pipeline saved successfully.")
 
 if __name__ == "__main__":
