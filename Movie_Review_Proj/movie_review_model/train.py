@@ -18,7 +18,7 @@ def train_pipeline():
     # texts, labels = load_custom_dataset(config.data.train_data_path, split_percentage=25)
 
     # Load a small sample from the IMDB dataset
-    texts, labels = load_imdb_dataset(sample_size=1000)
+    texts, labels = load_imdb_dataset(sample_size=100) #for fast training
     
     # Ensure texts are in the correct format
     if not isinstance(texts, list) or not all(isinstance(text, str) for text in texts):
