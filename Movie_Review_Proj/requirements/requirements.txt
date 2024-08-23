@@ -10,5 +10,4 @@ datasets
 fastapi
 uvicorn
 nest_asyncio
-pytest
 torch
