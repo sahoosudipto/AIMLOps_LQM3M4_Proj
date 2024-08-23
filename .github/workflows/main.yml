@@ -22,7 +22,6 @@ jobs:
       run: ls -R ./Movie_Review_Proj/movie_review_model/trained_models/
     - name: Train and save pipeline
       run: python ./Movie_Review_Proj/movie_review_model/train.py
-      working-directory: ./Movie_Review_Proj/movie_review_model
     - name: List files after training
       run: ls -R ./Movie_Review_Proj/movie_review_model/trained_models/model
     - uses: actions/upload-artifact@v2
