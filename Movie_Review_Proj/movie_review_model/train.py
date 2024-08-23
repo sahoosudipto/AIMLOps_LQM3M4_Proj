@@ -48,7 +48,7 @@ def train_pipeline():
     # else:
     #     print("Model save failed.")
 
-    pipeline.named_steps['classifier'].model.save_pretrained("./Movie_Review_Proj/movie_review_model/trained_models/trained_pipeline.pkl")
+    pipeline.named_steps['classifier'].model.save_pretrained("./Movie_Review_Proj/movie_review_model/trained_models/model/trained_pipeline.pkl")
     print("Model and pipeline saved successfully.")
 
 if __name__ == "__main__":
