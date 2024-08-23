@@ -8,7 +8,7 @@ model:
   max_length: 256
   batch_size: 16
   learning_rate: 2e-5
-  epochs: 1 # less epochs for workflow action
+  epochs: 2 # less epochs for workflow action
   train_batch_size: 16
   eval_batch_size: 16
   optimizer: Adam with betas=(0.9,0.999)
