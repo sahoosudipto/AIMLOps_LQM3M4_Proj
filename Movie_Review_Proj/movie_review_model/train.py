@@ -35,12 +35,13 @@ def train_pipeline():
     # pipeline.named_steps['classifier'].model.save_pretrained(config.output.output_model_path)
     
     #     # Save the pipeline as a .pkl file
-    model_path = Path(config.output.output_model_path) / "trained_pipeline.pkl"
+    model_dir = Path(config.output.output_model_path)
+    model_dir.mkdir(parents=True, exist_ok=True)
+
+    model_path = model_dir / "trained_pipeline.pkl"
+    print(f"Model path: {model_path}")
     pipeline.named_steps['classifier'].model.save_pretrained(model_path)
-    print(pipeline)
-    # with open(model_path, "wb") as f:
-    #     pickle.dump(pipeline, f)
-        
+
     # save_pipeline(pipeline_to_persist=pipeline)
     if model_path.exists():
         print(f"Model saved successfully at: {model_path}")
