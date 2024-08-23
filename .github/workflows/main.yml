@@ -16,17 +16,17 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: '3.10.4'
-    # - name: Install dependencies
-    #   run: pip install -r ./Movie_Review_Proj/requirements/requirements.txt
-    # - name: Train and save pipeline
-    #   run: python ./Movie_Review_Proj/movie_review_model/train.py
-    # - name: List files after training
-    #   run: ls -R ./Movie_Review_Proj/movie_review_model/trained_models/
-    # - uses: actions/upload-artifact@v2
-    #   with:
-    #     name: my-trained-pipeline
-    #     path: ./Movie_Review_Proj/movie_review_model/trained_models/*.pkl
-    #     retention-days: 1
+    - name: Install dependencies
+      run: pip install -r ./Movie_Review_Proj/requirements/requirements.txt
+    - name: Train and save pipeline
+      run: python ./Movie_Review_Proj/movie_review_model/train.py
+    - name: List files after training
+      run: ls -R ./Movie_Review_Proj/movie_review_model/trained_models/
+    - uses: actions/upload-artifact@v2
+      with:
+        name: my-trained-pipeline
+        path: ./Movie_Review_Proj/movie_review_model/trained_models/*.pkl
+        retention-days: 1
         
 
   test:
@@ -40,16 +40,16 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: '3.10.4'
-    # - uses: actions/download-artifact@v2
-    #   with:
-    #     name: my-trained-pipeline
-    #     path: ./Movie_Review_Proj/movie_review_model/trained_models
-    # - name: List files after downloading artifact
-    #   run: ls -R ./Movie_Review_Proj/movie_review_model/trained_models/
-    # - name: Install dependencies
-    #   run: pip install -r ./Movie_Review_Proj/requirements/requirements.txt
-    # - name: Test with pytest
-    #   run: pytest
+    - uses: actions/download-artifact@v2
+      with:
+        name: my-trained-pipeline
+        path: ./Movie_Review_Proj/movie_review_model/trained_models
+    - name: List files after downloading artifact
+      run: ls -R ./Movie_Review_Proj/movie_review_model/trained_models/
+    - name: Install dependencies
+      run: pip install -r ./Movie_Review_Proj/requirements/requirements.txt
+    - name: Test with pytest
+      run: pytest
 
   build:
     needs: [train, test]
