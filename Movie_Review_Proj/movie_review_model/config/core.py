@@ -1,13 +1,23 @@
 """Model and App configs"""
 from pathlib import Path
+import sys
+file = Path(__file__).resolve()
+parent, root = file.parent, file.parents[1]
+sys.path.append(str(root))
+
+import movie_review_model
+
+from pathlib import Path
 from pydantic import BaseModel
 from strictyaml import YAML, load
-import movie_review_model
+
 
 # Project Directories
 PACKAGE_ROOT = Path(movie_review_model.__file__).resolve().parent
 ROOT = PACKAGE_ROOT.parent
 CONFIG_FILE_PATH = PACKAGE_ROOT / "config.yml"
+DATASET_DIR = PACKAGE_ROOT / "datasets"
+TRAINED_MODEL_DIR = PACKAGE_ROOT / "trained_models"
 
 class ModelConfig(BaseModel):
     """Model config object."""

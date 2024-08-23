@@ -9,7 +9,7 @@ from movie_review_model.config.core import config
 from movie_review_model.processing.data_manager import load_custom_dataset, load_imdb_dataset
 from movie_review_model.pipeline import build_pipeline
 
-
+import pickle
 
 
 def train_pipeline():
@@ -31,7 +31,15 @@ def train_pipeline():
     pipeline.fit(texts, labels)
 
     # Save the pipeline (including the trained model)
-    pipeline.named_steps['classifier'].model.save_pretrained(config.output.output_model_path)
+    # pipeline.named_steps['classifier'].model.save_pretrained(config.output.output_model_path)
+    
+    #     # Save the pipeline as a .pkl file
+    model_path = Path(config.output.output_model_path) / "trained_pipeline.pkl"
+    with open(model_path, "wb") as f:
+        pickle.dump(pipeline, f)
+        
+    # save_pipeline(pipeline_to_persist=pipeline)
+    
     print("Model and pipeline saved successfully.")
 
 if __name__ == "__main__":
