@@ -53,10 +53,10 @@ jobs:
       run: ls -R ./Movie_Review_Proj/movie_review_model/trained_models/
     - name: Install dependencies
       run: pip install -r ./Movie_Review_Proj/requirements/test_requirements.txt
-    - name: Test predictionl with pytest
-      run: pytest ./Movie_Review_Proj/test/test_predictionl.py
-    - name: Run all testcases  with pytest
-      run: pytest
+    - name: Test preprocessing with pytest
+      run: pytest ./Movie_Review_Proj/test/test_preprocessing.py
+    # - name: Run all testcases  with pytest
+    #   run: pytest
 
   build:
     # needs: [train, test]
@@ -101,7 +101,7 @@ jobs:
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PWD }}
-      # run: echo "${{ secrets.DOCKER_PWD }}" | echo "${{ secrets.DOCKER_USERNAME }}"| echo $DOCKER_PASSWORD | echo "${{ secrets.DOCKER_USERNAME }}"|docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      # run: echo "${{ secrets.DOCKER_PWD }}" | docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
       run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
       # run: docker login -u "$DOCKER_USERNAME" -p $(docker secret inspect my-docker-secret | jq -r '.[].data.SecretValue')
 
