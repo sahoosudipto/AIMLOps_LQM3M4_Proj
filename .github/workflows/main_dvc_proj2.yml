@@ -1,0 +1,110 @@
+name: CI/CD Pipeline for ML Model
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  data-management:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+    - name: Install DVC and Dependencies
+      run: |
+        sudo apt-get install -y dvc
+        pip install -r ./Movie_Review_Proj/requirements/requirements.txt
+    - name: Pull Datasets with DVC
+      run: dvc pull
+
+  train:
+    needs: data-management
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10.4'
+    - name: Install Dependencies
+      run: pip install -r ./Movie_Review_Proj/requirements/requirements.txt
+    - name: Train and Save Model
+      run: python ./Movie_Review_Proj/movie_review_model/train.py
+    - name: Save Trained Model
+      uses: actions/upload-artifact@v2
+      with:
+        name: trained-model
+        path: ./Movie_Review_Proj/movie_review_model/trained_models/
+        retention-days: 1
+
+  test:
+    needs: train
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10.4'
+    - uses: actions/download-artifact@v2
+      with:
+        name: trained-model
+        path: ./Movie_Review_Proj/movie_review_model/trained_models/
+    - name: Install Test Dependencies
+      run: pip install -r ./Movie_Review_Proj/requirements/test_requirements.txt
+    - name: Run Tests
+      run: pytest ./Movie_Review_Proj/test/test_preprocess.py
+
+  build:
+    needs: train
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+    - uses: actions/download-artifact@v2
+      with:
+        name: trained-model
+        path: ./Movie_Review_Proj/movie_review_model/trained_models/
+    - name: Install Build Tools
+      run: pip install --upgrade build
+    - name: Build Python Package
+      run: cd Movie_Review_Proj && python -m build
+    - uses: actions/upload-artifact@v2
+      with:
+        name: build-package
+        path: ./Movie_Review_Proj/dist/*.whl
+        retention-days: 1
+
+  push-image:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+    - uses: actions/download-artifact@v2
+      with:
+        name: build-package
+        path: ./Movie_Review_Proj/dist/
+    - name: Login to Docker Hub
+      run: echo "${{ secrets.DOCKER_PWD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+    - name: Build Docker Image
+      run: cd Movie_Review_Proj && docker build . -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/movie_review_model_api:latest
+    - name: Push Docker Image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/movie_review_model_api:latest
+    - name: Logout of Docker Hub
+      run: docker logout
+
+  deploy:
+    needs: push-image
+    runs-on: self-hosted
+    steps:
+    - name: Pull Docker Image
+      run: sudo docker pull ${{ secrets.DOCKER_USERNAME }}/movie_review_model_api:latest
+    - name: Delete Old Docker Container
+      run: sudo docker rm -f movie-review-fastapi-container || true
+    - name: Run Docker Container
+      run: sudo docker run -it -d -p 8001:8001 --name movie-review-fastapi-container ${{ secrets.DOCKER_USERNAME }}/movie_review_model_api:latest
